@@ -45,6 +45,14 @@ Vào thư mục **`assets/feedback/`** → **Add file → Upload files** → ké
 
 > Khi sửa code Apps Script sau này: **Triển khai → Quản lý các bản triển khai → ✏️ → Phiên bản: Mới → Triển khai** (giữ nguyên URL).
 > Người lạ chỉ thấy được URL Web App (chỉ nhận dữ liệu), **không** xem được Sheet.
+> Nếu đổi danh sách "Biết đến qua đâu" trong `config.jsonc`, sửa cả dòng `var SOURCES = [...]` trong Apps Script cho giống (lựa chọn lạ sẽ được ghi thành "Khác").
+
+## 4b. Lưu ý an toàn
+
+- **Không chia sẻ Google Sheet công khai** và không dán link Sheet lên website. Chỉ chia sẻ cho người phụ trách tư vấn.
+- Bật **xác minh 2 bước** cho tài khoản Google, GitHub và Vercel/Netlify — ai vào được các tài khoản này là sửa được website hoặc đọc được dữ liệu khách.
+- Chỉ cấp quyền **Google Tag Manager** cho người tin cậy: GTM có thể chèn mã bất kỳ vào trang.
+- Khi GitHub gửi đề xuất cập nhật thư viện (Dependabot), nhờ coder xem và gộp.
 
 ## 5. Gắn tên miền
 

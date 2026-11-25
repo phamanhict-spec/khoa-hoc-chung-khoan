@@ -33,7 +33,34 @@ async function readConfig() {
   };
   ['site', 'khoaHoc', 'lienHe', 'form', 'videos', 'pixel', 'seo', 'hinhAnh'].forEach((k) => need(cfg, k));
   if (!Number.isFinite(+cfg.khoaHoc.hocPhi)) throw new Error('config.jsonc: "hocPhi" phải là số, ví dụ 10000000');
+  validateConfig(cfg);
   return cfg;
+}
+
+// Chặn link/đường dẫn nguy hiểm trong cấu hình (vd "javascript:…", "../../")
+function validateConfig(cfg) {
+  const httpsUrl = (v, name, optional = false) => {
+    if (optional && !v) return;
+    let u;
+    try { u = new URL(v); } catch (_) { u = null; }
+    if (!u || u.protocol !== 'https:') throw new Error(`config.jsonc: "${name}" phải là link bắt đầu bằng https:// (đang là "${v}")`);
+  };
+  const assetPath = (v, name) => {
+    if (!v) return;
+    if (!/^\/assets\/[\w\-./]+$/.test(v) || v.includes('..')) throw new Error(`config.jsonc: "${name}" phải là đường dẫn trong thư mục /assets/ (đang là "${v}")`);
+  };
+  httpsUrl(cfg.lienHe.zalo, 'lienHe.zalo');
+  httpsUrl(cfg.lienHe.tiktok, 'lienHe.tiktok');
+  httpsUrl(cfg.site.url, 'site.url', true);
+  httpsUrl(cfg.form.appsScriptUrl, 'form.appsScriptUrl', true);
+  assetPath(cfg.seo.anhChiaSe, 'seo.anhChiaSe');
+  assetPath(cfg.hinhAnh.logo, 'hinhAnh.logo');
+  assetPath(cfg.hinhAnh.anhChanDung, 'hinhAnh.anhChanDung');
+  if (!Array.isArray(cfg.videos)) throw new Error('config.jsonc: "videos" phải là danh sách [ ... ]');
+  cfg.videos.forEach((v, i) => {
+    assetPath(v.anhBia, `videos[${i + 1}].anhBia`);
+    assetPath(v.mp4, `videos[${i + 1}].mp4`);
+  });
 }
 
 function siteUrlFrom(cfg) {
@@ -157,20 +184,83 @@ function pixelSnippets(px) {
   for (const [k, v, real] of [['tiktok', px.tiktok, tt], ['facebook', px.facebook, fb], ['ga4', px.ga4, ga], ['gtm', px.gtm, gtm]]) {
     if (v && !real) console.warn(`  ⚠ pixel.${k} "${v}" không đúng định dạng — bỏ qua`);
   }
-  let head = '';
+  // Mã inline (sẽ được băm SHA-256 để đưa vào CSP) và tên miền mà từng pixel cần
+  const inline = [];
+  let headExtra = '';
   let body = '';
-  if (tt)
-    head += `<script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('${tt}');ttq.page();}(window,document,'ttq');</script>\n`;
-  if (fb)
-    head += `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${fb}');fbq('track','PageView');</script>\n`;
-  if (ga)
-    head += `<script async src="https://www.googletagmanager.com/gtag/js?id=${ga}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ga}');</script>\n`;
-  if (gtm) {
-    head += `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');</script>\n`;
-    body += `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${gtm}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`;
+  const hosts = { script: new Set(), connect: new Set(), img: new Set(), frame: new Set() };
+  const add = (k, ...h) => h.forEach((x) => hosts[k].add(x));
+  if (tt) {
+    inline.push(`!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('${tt}');ttq.page();}(window,document,'ttq');`);
+    add('script', 'https://analytics.tiktok.com', 'https://*.tiktok.com', 'https://*.tiktokw.us');
+    add('connect', 'https://analytics.tiktok.com', 'https://*.tiktok.com', 'https://*.tiktokw.us');
+    add('img', 'https://*.tiktok.com');
   }
-  return { head, body, gtm: !!gtm, enabled: { tiktok: !!tt, facebook: !!fb, ga4: !!ga, gtm: !!gtm } };
+  if (fb) {
+    inline.push(`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${fb}');fbq('track','PageView');`);
+    add('script', 'https://connect.facebook.net');
+    add('connect', 'https://connect.facebook.net', 'https://www.facebook.com');
+    add('img', 'https://www.facebook.com');
+  }
+  if (ga) {
+    headExtra += `<script async src="https://www.googletagmanager.com/gtag/js?id=${ga}"></script>\n`;
+    inline.push(`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ga}');`);
+    add('script', 'https://www.googletagmanager.com');
+    add('connect', 'https://*.google-analytics.com', 'https://*.analytics.google.com', 'https://www.googletagmanager.com', 'https://www.google.com');
+    add('img', 'https://*.google-analytics.com', 'https://www.googletagmanager.com', 'https://www.google.com');
+  }
+  if (gtm) {
+    inline.push(`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`);
+    body += `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${gtm}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`;
+    add('frame', 'https://www.googletagmanager.com');
+  }
+  const head = inline.map((c) => `<script>${c}</script>`).join('\n') + '\n' + headExtra;
+  return { head, body, inline, hosts, gtm: !!gtm, enabled: { tiktok: !!tt, facebook: !!fb, ga4: !!ga, gtm: !!gtm } };
 }
+
+// ---------------- Bảo mật: CSP ----------------
+const sha256 = (s) => `'sha256-${crypto.createHash('sha256').update(s, 'utf8').digest('base64')}'`;
+
+/** Content-Security-Policy: chỉ cho chạy script của chính trang + pixel đã bật. */
+function buildCsp(px) {
+  const j = (set) => [...set].join(' ');
+  let scriptSrc, connectSrc, imgSrc;
+  if (px.gtm) {
+    // GTM cho phép chèn thẻ tuỳ ý từ giao diện GTM → buộc phải nới CSP
+    scriptSrc = `'self' 'unsafe-inline' https:`;
+    connectSrc = `'self' https:`;
+    imgSrc = `'self' data: https:`;
+  } else {
+    scriptSrc = ["'self'", ...px.inline.map(sha256), j(px.hosts.script)].filter(Boolean).join(' ');
+    connectSrc = ["'self'", 'https://script.google.com', 'https://script.googleusercontent.com', j(px.hosts.connect)].filter(Boolean).join(' ');
+    imgSrc = ["'self'", 'data:', 'https://i.ytimg.com', j(px.hosts.img)].filter(Boolean).join(' ');
+  }
+  return [
+    `default-src 'self'`,
+    `script-src ${scriptSrc}`,
+    `style-src 'self' 'unsafe-inline'`,
+    `img-src ${imgSrc}`,
+    `font-src 'self'`,
+    `connect-src ${connectSrc}`,
+    `frame-src https://www.youtube-nocookie.com ${j(px.hosts.frame)}`.trim(),
+    `media-src 'self'`,
+    `object-src 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+    `upgrade-insecure-requests`,
+  ].join('; ');
+}
+
+// Header bảo mật dùng chung (Netlify/Cloudflare đọc dist/_headers; Vercel đọc vercel.json — giữ 2 nơi giống nhau)
+export const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Frame-Options': 'DENY',
+  'Content-Security-Policy': "frame-ancestors 'none'",
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()',
+  'Strict-Transport-Security': 'max-age=31536000',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+};
 
 // ---------------- Font tự host ----------------
 async function buildFonts() {
@@ -297,6 +387,7 @@ export async function build() {
     videos,
     fontPreloads: fonts.preloads,
     pixelHead: px.head,
+    csp: buildCsp(px),
     pixelBody: px.body,
     assets: { css: '/' + cssFile, mainJs: outFor('main'), thanksJs: outFor('thanks') },
     clientConfig: {
@@ -333,7 +424,9 @@ export async function build() {
   if (siteUrl)
     await write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${siteUrl}/</loc></url><url><loc>${siteUrl}/chinh-sach-bao-ve-du-lieu/</loc></url></urlset>\n`);
   // Header cache/bảo mật cho Netlify & Cloudflare Pages (Vercel dùng vercel.json)
-  await write('_headers', `/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/cam-on/*\n  X-Robots-Tag: noindex\n`);
+  const sec = Object.entries(SECURITY_HEADERS).map(([k, v]) => `  ${k}: ${v}`).join('\n');
+  await write('_headers', `/*\n${sec}\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n/cam-on/*\n  X-Robots-Tag: noindex\n`);
+  if (px.gtm) console.warn('  ⚠ Đang bật GTM → CSP phải nới lỏng (cho phép script inline). Chỉ cấp quyền GTM cho người tin cậy.');
 
   log(`Build xong sau ${Date.now() - t0}ms → dist/`);
   log(`Video: ${videos.length} · Ảnh feedback: ${feedbackIsSample ? '0 (đang dùng ảnh mẫu)' : feedback.length} · Ảnh app: ${results.length}`);

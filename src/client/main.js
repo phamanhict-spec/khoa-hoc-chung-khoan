@@ -115,22 +115,37 @@ function closeOverlay(el, after) {
 // ---------------- Video phóng to ----------------
 function initVideos() {
   const modal = $('[data-video-modal]');
+  if (!modal) return;
   const boxEl = $('[data-video-box]', modal);
-  const clear = () => (boxEl.innerHTML = '');
+  const clear = () => boxEl.replaceChildren();
   document.addEventListener('click', (ev) => {
     const btn = ev.target.closest('[data-video]');
     if (!btn) return;
     const v = (SITE.videos || [])[+btn.dataset.video];
     if (!v) return;
-    let html;
-    if (v.type === 'youtube') {
-      html = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&playsinline=1&rel=0&modestbranding=1" title="${v.label.replace(/"/g, '')}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
-    } else if (v.type === 'mp4') {
-      html = `<video src="${v.src}" controls autoplay playsinline preload="auto"${v.poster ? ` poster="${v.poster}"` : ''}></video>`;
+    // Dựng phần tử bằng DOM (không ghép chuỗi HTML) để chữ trong cấu hình không thể chèn mã
+    let node;
+    if (v.type === 'youtube' && /^[\w-]{11}$/.test(v.id)) {
+      node = document.createElement('iframe');
+      node.src = `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+      node.title = v.label;
+      node.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      node.allowFullscreen = true;
+      node.referrerPolicy = 'strict-origin-when-cross-origin';
+    } else if (v.type === 'mp4' && /^\/assets\//.test(v.src)) {
+      node = document.createElement('video');
+      Object.assign(node, { src: v.src, controls: true, autoplay: true, playsInline: true, preload: 'auto' });
+      if (v.poster) node.poster = v.poster;
     } else {
-      html = `<div class="video-empty"><p>Video “${v.label}” đang được cập nhật.</p><p>Quay lại sau ít hôm nhé!</p></div>`;
+      node = document.createElement('div');
+      node.className = 'video-empty';
+      const p1 = document.createElement('p');
+      p1.textContent = `Video “${v.label}” đang được cập nhật.`;
+      const p2 = document.createElement('p');
+      p2.textContent = 'Quay lại sau ít hôm nhé!';
+      node.append(p1, p2);
     }
-    boxEl.innerHTML = html;
+    boxEl.replaceChildren(node);
     openOverlay(modal);
     track('play_video', { content_name: v.label });
   });
@@ -145,6 +160,7 @@ function initVideos() {
 // ---------------- Xem ảnh phóng to (vuốt trái/phải) ----------------
 function initLightbox() {
   const lb = $('[data-lightbox]');
+  if (!lb) return;
   const img = $('[data-lb-img]', lb), cap = $('[data-lb-cap]', lb);
   let list = [], idx = 0;
   const show = (i) => {

@@ -17,6 +17,7 @@ export function layout(ctx, { title, description, path, body, noindex = false, s
 <html lang="vi">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="${esc(ctx.csp)}">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
@@ -37,7 +38,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow">' : `<link rel="can
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 ${ctx.fontPreloads}
 <link rel="stylesheet" href="${assets.css}">
-<script>window.SITE=${JSON.stringify(ctx.clientConfig).replace(/</g, '\\u003c')};</script>
+<script type="application/json" id="site-data">${JSON.stringify(ctx.clientConfig).replace(/</g, '\\u003c')}</script>
 ${ctx.pixelHead}
 </head>
 <body class="${bodyClass}">

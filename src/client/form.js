@@ -86,9 +86,20 @@ export function initForm() {
     if (PHONE_RE.test(n)) f.phone.value = n;
   });
 
-  const showMsg = (html) => {
-    msgEl.innerHTML = html;
-    msgEl.hidden = !html;
+  // Thông báo dưới nút gửi; withZalo = kèm nút nhắn Zalo
+  const showMsg = (text, withZalo = false) => {
+    msgEl.replaceChildren(text);
+    if (withZalo && /^https:\/\//.test(SITE.zalo || '')) {
+      const a = document.createElement('a');
+      a.className = 'btn btn-zalo';
+      a.href = SITE.zalo;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.dataset.zalo = '';
+      a.textContent = 'Nhắn Zalo';
+      msgEl.append(' ', a);
+    }
+    msgEl.hidden = !text;
   };
 
   let sending = false;
@@ -161,7 +172,7 @@ export function initForm() {
       sending = false;
       submitBtn.disabled = false;
       submitBtn.textContent = 'Gửi đăng ký';
-      showMsg(`${MSG.fail} <a class="btn btn-zalo" href="${SITE.zalo}" target="_blank" rel="noopener" data-zalo>Nhắn Zalo</a>`);
+      showMsg(MSG.fail, true);
     }
   });
 }

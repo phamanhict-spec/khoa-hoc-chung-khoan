@@ -14,9 +14,12 @@ const TYPES = {
 export function serve(port = Number(process.env.PORT) || 4321) {
   http
     .createServer((req, res) => {
-      let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-      let file = path.join(DIST, p);
-      if (!file.startsWith(DIST)) return res.writeHead(403).end();
+      let p;
+      try { p = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch (_) { return res.writeHead(400).end(); }
+      let file = path.join(DIST, p.replace(/\0/g, ''));
+      file = path.resolve(file);
+      // chặn đọc file ngoài thư mục dist/ (vd /../dist-khac/…)
+      if (file !== DIST && !file.startsWith(DIST + path.sep)) return res.writeHead(403).end();
       if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
       if (!fs.existsSync(file)) {
         res.writeHead(404, { 'Content-Type': TYPES['.html'] });
@@ -25,7 +28,8 @@ export function serve(port = Number(process.env.PORT) || 4321) {
       res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream' });
       fs.createReadStream(file).pipe(res);
     })
-    .listen(port, () => console.log(`› Xem thử tại http://localhost:${port}`));
+    // chỉ mở trên máy mình (không lộ ra mạng LAN/wifi công cộng)
+    .listen(port, '127.0.0.1', () => console.log(`› Xem thử tại http://localhost:${port}`));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) serve();

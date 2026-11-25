@@ -1,0 +1,8 @@
+# Tự kiểm tra và đề xuất cập nhật thư viện có lỗ hổng bảo mật (mỗi tháng)
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3

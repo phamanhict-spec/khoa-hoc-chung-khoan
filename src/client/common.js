@@ -1,7 +1,15 @@
 // Phần dùng chung cho mọi trang: khung vẽ tay Rough.js, hiệu ứng khi cuộn tới, đo lường.
 import rough from 'roughjs/bin/rough.js';
 
-export const SITE = window.SITE || {};
+// Cấu hình nằm trong <script type="application/json"> (không thực thi được) → hợp với CSP
+function readSite() {
+  try {
+    return JSON.parse(document.getElementById('site-data')?.textContent || '{}');
+  } catch (_) {
+    return {};
+  }
+}
+export const SITE = readSite();
 export const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------------- Đo lường (pixel) ----------------
