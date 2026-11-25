@@ -127,10 +127,10 @@ async function processGallery(folder, thumbW, fullW) {
   return items;
 }
 
-// xoay ngẫu nhiên nhưng ổn định theo tên file (−2° → +2°)
+// xoay ngẫu nhiên nhưng ổn định theo tên file (−1,2° → +1,2°)
 const rotFor = (name) => {
   const n = parseInt(crypto.createHash('md5').update(name).digest('hex').slice(0, 6), 16);
-  return (((n % 400) / 100) - 2).toFixed(2);
+  return (((n % 240) / 100) - 1.2).toFixed(2);
 };
 
 // ---------------- Video ----------------
@@ -272,7 +272,11 @@ async function buildFonts() {
     ['Patrick Hand', 'patrick-hand', 400],
     ['Be Vietnam Pro', 'be-vietnam-pro', 400],
     ['Be Vietnam Pro', 'be-vietnam-pro', 600],
+    ['Be Vietnam Pro', 'be-vietnam-pro', 700],
+    ['Be Vietnam Pro', 'be-vietnam-pro', 800],
   ];
+  // Font cần ngay ở màn hình đầu: tiêu đề (800), thân (400), tag viết tay
+  const PRELOAD = new Set(['be-vietnam-pro-800-latin', 'be-vietnam-pro-800-vietnamese', 'be-vietnam-pro-400-latin', 'patrick-hand-400-latin']);
   let css = '';
   const preloads = [];
   for (const [family, pkg, weight] of fonts) {
@@ -282,8 +286,7 @@ async function buildFonts() {
       const file = `${pkg}-${subset}-${weight}-${hashOf(buf)}.woff2`;
       await fs.writeFile(path.join(out, file), buf);
       css += `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:swap;src:url(/assets/fonts/${file}) format('woff2');unicode-range:${range};}\n`;
-      if (subset === 'latin' && !(pkg === 'be-vietnam-pro' && weight === 600)) preloads.push(`/assets/fonts/${file}`);
-      if (subset === 'vietnamese' && pkg === 'patrick-hand') preloads.push(`/assets/fonts/${file}`);
+      if (PRELOAD.has(`${pkg}-${weight}-${subset}`)) preloads.push(`/assets/fonts/${file}`);
     }
   }
   return {

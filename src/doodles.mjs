@@ -58,98 +58,86 @@ export function svg(w, h, items, { cls = '', label = '', extra = '', attrs = '' 
     .join('')}${extra}</svg>`;
 }
 
-// ---------- Icon ----------
+// ---------- Icon: nét mực đen + 1 điểm nhấn cam, không tô pastel ----------
+const L = (o = {}) => ({ roughness: 0.55, bowing: 0.6, strokeWidth: 1.8, ...o });
 const ic = (items, label, cls = 'doodle') => svg(64, 64, items, { cls, label });
+const O = C.orange;
 
 export const icons = {
   house: () =>
     ic([
-      S.rect(14, 30, 36, 26, { fill: C.orangeLite }),
-      S.poly([[8, 32], [32, 10], [56, 32]], { fill: C.yellow }),
-      S.rect(27, 40, 10, 16, { fill: C.white }),
+      S.rect(16, 30, 32, 24, L()),
+      S.poly([[10, 32], [32, 12], [54, 32]], L()),
+      S.rect(28, 40, 8, 14, L({ stroke: O })),
     ], 'Bất động sản'),
   gold: () =>
     ic([
-      S.poly([[8, 50], [16, 26], [48, 26], [56, 50]], { fill: C.yellow }),
-      S.line(20, 32, 30, 32, { strokeWidth: 1.5 }),
-      S.line(44, 12, 44, 18, { strokeWidth: 1.5 }),
-      S.line(40, 15, 48, 15, { strokeWidth: 1.5 }),
+      S.poly([[10, 48], [17, 28], [47, 28], [54, 48]], L()),
+      S.line(22, 34, 30, 34, L({ stroke: O })),
     ], 'Vàng'),
   candles: (circled = false) =>
     ic([
-      S.line(18, 30, 18, 54), S.rect(13, 36, 10, 12, { fill: C.orangeLite }),
-      S.line(32, 18, 32, 48), S.rect(27, 24, 10, 16, { fill: C.yellow }),
-      S.line(46, 8, 46, 40), S.rect(41, 12, 10, 20, { fill: C.orange }),
-      ...(circled ? [S.ellipse(32, 32, 62, 60, { stroke: C.orange, strokeWidth: 2.5, roughness: 1.6 })] : []),
+      S.line(18, 30, 18, 54, L()), S.rect(14, 36, 8, 12, L()),
+      S.line(32, 18, 32, 46, L()), S.rect(28, 24, 8, 14, L()),
+      S.line(46, 8, 46, 40, L()), S.rect(42, 12, 8, 20, L({ fill: O, stroke: C.ink })),
+      ...(circled ? [S.ellipse(32, 32, 62, 60, L({ stroke: O, strokeWidth: 2.2, roughness: 1.1 }))] : []),
     ], 'Cổ phiếu'),
   globeFactory: () =>
     ic([
-      S.circle(16, 22, 24, { fill: C.orangeLite }),
-      S.ellipse(16, 22, 10, 24, { strokeWidth: 1.4 }),
-      S.line(4, 22, 28, 22, { strokeWidth: 1.4 }),
-      S.path('M24 36 Q 30 44 36 40', { strokeWidth: 1.6 }),
-      S.line(36, 40, 31, 38, { strokeWidth: 1.6 }), S.line(36, 40, 34, 35, { strokeWidth: 1.6 }),
-      S.poly([[30, 58], [30, 46], [38, 40], [38, 46], [46, 40], [46, 46], [54, 40], [54, 58]], { fill: C.yellow }),
-      S.rect(48, 26, 5, 14, { fill: C.white }),
+      S.circle(18, 20, 24, L()),
+      S.ellipse(18, 20, 10, 24, L({ strokeWidth: 1.3 })),
+      S.line(6, 20, 30, 20, L({ strokeWidth: 1.3 })),
+      S.path('M26 34 Q 31 42 38 40', L({ stroke: O })),
+      S.line(38, 40, 33, 37, L({ stroke: O })), S.line(38, 40, 35, 35, L({ stroke: O })),
+      S.poly([[28, 58], [28, 48], [36, 43], [36, 48], [44, 43], [44, 48], [52, 43], [52, 58]], L()),
+      S.line(48, 30, 48, 44, L()),
     ], 'Từ vĩ mô đến doanh nghiệp'),
   funnelClock: () =>
     ic([
-      S.poly([[6, 10], [42, 10], [28, 30], [28, 50], [20, 54], [20, 30]], { fill: C.yellow }),
-      S.circle(46, 44, 26, { fill: C.white }),
-      S.line(46, 44, 46, 36, { strokeWidth: 1.8 }), S.line(46, 44, 52, 47, { strokeWidth: 1.8 }),
+      S.poly([[6, 10], [42, 10], [28, 30], [28, 50], [20, 54], [20, 30]], L()),
+      S.circle(46, 44, 24, L({ stroke: O })),
+      S.line(46, 44, 46, 37, L({ stroke: O })), S.line(46, 44, 51, 47, L({ stroke: O })),
     ], 'Lọc cổ phiếu và chọn thời điểm'),
   magnifierReport: () =>
     ic([
-      S.rect(8, 6, 34, 46, { fill: C.white }),
-      S.line(14, 16, 34, 16, { strokeWidth: 1.4 }), S.line(14, 24, 36, 24, { strokeWidth: 1.4 }),
-      S.line(14, 32, 26, 32, { strokeWidth: 1.4 }),
-      S.circle(38, 38, 22, { fill: C.orangeLite }),
-      S.line(46, 46, 58, 58, { strokeWidth: 4 }),
+      S.rect(8, 6, 32, 46, L()),
+      S.line(14, 16, 32, 16, L({ strokeWidth: 1.3 })), S.line(14, 24, 34, 24, L({ strokeWidth: 1.3 })),
+      S.line(14, 32, 24, 32, L({ strokeWidth: 1.3 })),
+      S.circle(38, 38, 20, L({ stroke: O, strokeWidth: 2.2 })),
+      S.line(45, 45, 57, 57, L({ stroke: O, strokeWidth: 3 })),
     ], 'Đọc báo cáo tài chính'),
   robot: () =>
-    ic([
-      S.line(32, 6, 32, 14), S.circle(32, 6, 6, { fill: C.orange }),
-      S.rect(12, 14, 40, 32, { fill: C.yellow }),
-      S.circle(24, 28, 8, { fill: C.white }), S.circle(40, 28, 8, { fill: C.white }),
-      S.line(24, 38, 40, 38),
-      S.rect(18, 48, 28, 10, { fill: C.orangeLite }),
-      S.line(6, 24, 12, 26), S.line(58, 24, 52, 26),
-    ], 'Trí tuệ nhân tạo'),
+    svg(64, 64, [
+      S.rect(14, 14, 36, 36, L()),
+      ...[22, 32, 42].flatMap((x) => [S.line(x, 6, x, 14, L({ strokeWidth: 1.4 })), S.line(x, 50, x, 58, L({ strokeWidth: 1.4 }))]),
+      ...[22, 32, 42].flatMap((y) => [S.line(6, y, 14, y, L({ strokeWidth: 1.4 })), S.line(50, y, 58, y, L({ strokeWidth: 1.4 }))]),
+    ], {
+      cls: 'doodle',
+      label: 'Trí tuệ nhân tạo',
+      extra: `<text x="32" y="38" text-anchor="middle" font-family="'Be Vietnam Pro',sans-serif" font-weight="800" font-size="15" fill="${O}">AI</text>`,
+    }),
   binocularsWave: () =>
     ic([
-      S.path('M4 52 Q 14 40 24 50 T 44 48 T 60 46', { stroke: C.orange, strokeWidth: 2.4 }),
-      S.circle(20, 26, 20, { fill: C.orangeLite }), S.circle(44, 26, 20, { fill: C.orangeLite }),
-      S.rect(28, 16, 8, 8, { fill: C.white }),
-      S.circle(20, 26, 8, { fill: C.white }), S.circle(44, 26, 8, { fill: C.white }),
+      S.circle(20, 24, 18, L()), S.circle(44, 24, 18, L()),
+      S.line(29, 24, 35, 24, L()),
+      S.path('M4 52 Q 14 40 24 50 T 44 48 T 60 42', L({ stroke: O, strokeWidth: 2.4 })),
     ], 'Đánh giá kỳ vọng tương lai'),
-  flag: (fill = C.orange) =>
-    ic([
-      S.line(16, 6, 16, 60, { strokeWidth: 2.4 }),
-      S.poly([[16, 8], [52, 14], [16, 30]], { fill }),
-      S.ellipse(16, 60, 22, 6, { strokeWidth: 1.4 }),
-    ], 'Lá cờ'),
   finishFlag: () =>
     svg(80, 80, [
-      S.line(18, 8, 18, 74, { strokeWidth: 2.6 }),
-      S.rect(18, 10, 48, 30, { fill: C.white }),
-      S.rect(18, 10, 12, 10, { fill: C.ink, roughness: 0.6 }), S.rect(42, 10, 12, 10, { fill: C.ink, roughness: 0.6 }),
-      S.rect(30, 20, 12, 10, { fill: C.ink, roughness: 0.6 }), S.rect(54, 20, 12, 10, { fill: C.ink, roughness: 0.6 }),
-      S.rect(18, 30, 12, 10, { fill: C.ink, roughness: 0.6 }), S.rect(42, 30, 12, 10, { fill: C.ink, roughness: 0.6 }),
-      S.ellipse(18, 74, 26, 7, { strokeWidth: 1.4 }),
-      S.line(60, 52, 68, 46, { stroke: C.orange }), S.line(62, 60, 72, 58, { stroke: C.orange }),
-      S.line(54, 46, 56, 38, { stroke: C.orange }),
-    ], { cls: 'doodle', label: 'Cờ đích' }),
+      S.circle(40, 40, 64, L({ stroke: C.teal, strokeWidth: 2.4 })),
+      S.path('M26 41 L 36 51 L 56 29', L({ stroke: C.teal, strokeWidth: 4 })),
+    ], { cls: 'doodle', label: 'Hoàn tất' }),
   play: () =>
     svg(72, 72, [
-      S.circle(36, 36, 62, { fill: C.orange, stroke: C.ink, strokeWidth: 2.4 }),
-      S.poly([[28, 22], [52, 36], [28, 50]], { fill: C.white, strokeWidth: 2 }),
+      S.circle(36, 36, 58, { fill: O, stroke: 'none', roughness: 0.3, fillStyle: 'solid' }),
+      S.poly([[30, 25], [49, 36], [30, 47]], { fill: '#fff', stroke: 'none', roughness: 0.2, fillStyle: 'solid' }),
     ], { cls: 'doodle play-icon' }),
   check: (color = C.teal) =>
-    svg(40, 40, [S.path('M6 22 L 16 32 L 34 8', { stroke: color, strokeWidth: 4, roughness: 1.4 })], { cls: 'mark mark-check' }),
-  cross: (color = C.orange) =>
+    svg(40, 40, [S.path('M7 21 L 16 30 L 33 10', { stroke: color, strokeWidth: 3.4, roughness: 0.8 })], { cls: 'mark mark-check' }),
+  cross: (color = O) =>
     svg(40, 40, [
-      S.line(8, 8, 32, 32, { stroke: color, strokeWidth: 4, roughness: 1.4 }),
-      S.line(32, 8, 8, 32, { stroke: color, strokeWidth: 4, roughness: 1.4 }),
+      S.line(10, 10, 30, 30, { stroke: color, strokeWidth: 3.4, roughness: 0.8 }),
+      S.line(30, 10, 10, 30, { stroke: color, strokeWidth: 3.4, roughness: 0.8 }),
     ], { cls: 'mark mark-cross' }),
   arrowRight: (color = C.ink) =>
     svg(60, 24, [
@@ -159,64 +147,87 @@ export const icons = {
     ], { cls: 'arrow arrow-right' }),
   arrowDown: () =>
     svg(24, 40, [
-      S.path('M12 4 Q 9 20 12 34', { strokeWidth: 2.4 }),
-      S.line(12, 34, 5, 25, { strokeWidth: 2.4 }),
-      S.line(12, 34, 19, 26, { strokeWidth: 2.4 }),
+      S.path('M12 4 Q 10 20 12 34', { strokeWidth: 2 }),
+      S.line(12, 34, 6, 26, { strokeWidth: 2 }),
+      S.line(12, 34, 18, 27, { strokeWidth: 2 }),
     ], { cls: 'arrow arrow-down' }),
-  vs: () =>
-    svg(72, 56, [S.ellipse(36, 28, 66, 48, { fill: C.yellow, strokeWidth: 2 })], {
-      cls: 'vs-badge',
-      label: 'so với',
-      extra: `<text x="36" y="37" text-anchor="middle" font-family="'Patrick Hand', 'Itim', cursive" font-size="28" fill="${C.ink}">vs</text>`,
-    }),
-  zalo: () =>
-    svg(48, 48, [S.path('M8 10 Q 8 6 12 6 L 38 6 Q 42 6 42 10 L 42 30 Q 42 34 38 34 L 20 34 L 10 42 L 13 34 L 12 34 Q 8 34 8 30 Z', { fill: C.white, stroke: C.ink, strokeWidth: 2 })], {
-      cls: 'zalo-icon',
-      extra: `<text x="25" y="25" text-anchor="middle" font-family="'Be Vietnam Pro', sans-serif" font-weight="600" font-size="11" fill="#0068FF">Zalo</text>`,
-    }),
+  vs: () => `<span class="vs-text" aria-label="so với">vs</span>`,
+  zalo: () => `<span class="zalo-icon" aria-hidden="true">Zalo</span>`,
   close: () =>
-    svg(32, 32, [S.line(7, 7, 25, 25, { strokeWidth: 3, stroke: '#fff' }), S.line(25, 7, 7, 25, { strokeWidth: 3, stroke: '#fff' })], { cls: 'close-icon' }),
+    svg(32, 32, [S.line(8, 8, 24, 24, { strokeWidth: 2.6, stroke: '#fff', roughness: 0.3 }), S.line(24, 8, 8, 24, { strokeWidth: 2.6, stroke: '#fff', roughness: 0.3 })], { cls: 'close-icon' }),
   chevron: (dir = 'right') =>
     svg(32, 32, dir === 'right'
-      ? [S.path('M12 6 L 22 16 L 12 26', { strokeWidth: 3 })]
-      : [S.path('M20 6 L 10 16 L 20 26', { strokeWidth: 3 })], { cls: 'chev' }),
+      ? [S.path('M12 7 L 21 16 L 12 25', { strokeWidth: 2.6, roughness: 0.3 })]
+      : [S.path('M20 7 L 11 16 L 20 25', { strokeWidth: 2.6, roughness: 0.3 })], { cls: 'chev' }),
   tiktok: () =>
     svg(32, 32, [
-      S.path('M18 5 L 18 21 Q 18 27 12 27 Q 6 27 6 21 Q 6 15 13 15', { strokeWidth: 2.6 }),
-      S.path('M18 5 Q 20 11 26 12', { strokeWidth: 2.6 }),
+      S.path('M18 5 L 18 21 Q 18 27 12 27 Q 6 27 6 21 Q 6 15 13 15', { strokeWidth: 2.4, roughness: 0.4 }),
+      S.path('M18 5 Q 20 11 26 12', { strokeWidth: 2.4, roughness: 0.4 }),
     ], { cls: 'tt-icon' }),
 };
 
-// ---------- Hình minh hoạ màn hình đầu: nến tăng dần + con sóng ----------
+// ---------- Hình đầu trang: biểu đồ nến có chú thích viết tay (như trang phân tích) ----------
+function candleData() {
+  // tích luỹ đi ngang → bứt phá → sóng tăng mạnh (giá trị minh hoạ, không phải dữ liệu thật)
+  const closes = [42, 40, 43, 41, 39, 42, 44, 41, 40, 43, 42, 45, 52, 50, 57, 63, 60, 68, 76, 72, 83, 92];
+  let prev = 41;
+  return closes.map((c, i) => {
+    const o = i === 0 ? 41 : prev;
+    const hi = Math.max(o, c) + 1.5 + ((i * 7) % 4) * 0.6;
+    const lo = Math.min(o, c) - 1.5 - ((i * 5) % 3) * 0.6;
+    prev = c;
+    const vol = c > o ? (i > 11 ? 14 + ((i * 3) % 8) : 6 + ((i * 3) % 4)) : 5 + ((i * 5) % 4);
+    return { o, c, hi, lo, vol };
+  });
+}
+
 export function heroIllustration() {
-  const W = 520, H = 440;
-  const candle = (x, top, bottom, bodyTop, bodyBottom, fill) => [
-    S.line(x, top, x, bottom, { strokeWidth: 2.6 }),
-    S.rect(x - 16, bodyTop, 32, bodyBottom - bodyTop, { fill, strokeWidth: 2.6 }),
+  const W = 520, H = 420;
+  const px0 = 40, px1 = 500, py0 = 40, py1 = 320; // khung giá
+  const data = candleData();
+  const min = 34, max = 98;
+  const y = (v) => py1 - ((v - min) / (max - min)) * (py1 - py0);
+  const step = (px1 - px0) / data.length;
+  const x = (i) => px0 + step * (i + 0.5);
+  let g = '';
+  // lưới mờ
+  for (let k = 0; k <= 4; k++) {
+    const yy = py0 + ((py1 - py0) / 4) * k;
+    g += `<line x1="${px0}" y1="${yy}" x2="${px1}" y2="${yy}" stroke="#E8E0D2" stroke-width="1"/>`;
+  }
+  // nến + khối lượng
+  data.forEach((d, i) => {
+    const up = d.c >= d.o;
+    const col = up ? C.teal : C.orange;
+    const top = y(Math.max(d.o, d.c)), bot = y(Math.min(d.o, d.c));
+    g += `<line x1="${x(i)}" y1="${y(d.hi)}" x2="${x(i)}" y2="${y(d.lo)}" stroke="${col}" stroke-width="1.6"/>`;
+    g += `<rect x="${x(i) - step * 0.32}" y="${top}" width="${step * 0.64}" height="${Math.max(2, bot - top)}" fill="${up ? col : '#fff'}" stroke="${col}" stroke-width="1.6"/>`;
+    g += `<rect x="${x(i) - step * 0.32}" y="${392 - d.vol * 3}" width="${step * 0.64}" height="${d.vol * 3}" fill="${up ? 'rgba(46,139,130,.35)' : 'rgba(228,86,26,.3)'}"/>`;
+  });
+  g += `<line x1="${px0}" y1="392" x2="${px1}" y2="392" stroke="${C.ink}" stroke-width="1.2"/>`;
+  g += `<line x1="${px0}" y1="${py1 + 6}" x2="${px0}" y2="${py0 - 10}" stroke="${C.ink}" stroke-width="1.2"/>`;
+  // chú thích viết tay (Rough), đặt ở khoảng trống phía trên-trái đường giá
+  const ax = x(5.5);
+  const ex = x(12), ey = y(56); // đỉnh nến bứt phá
+  const ann = [
+    S.ellipse(ax, y(41.5), x(11) - x(0) + 26, 52, { stroke: C.ink, strokeWidth: 1.8, roughness: 1.1, seed: 21 }),
+    // điểm vào: mũi tên cong từ chữ xuống nến bứt phá
+    S.path(`M${x(9.6)} ${y(66)} Q ${x(11.6)} ${y(68)} ${ex} ${ey + 4}`, { stroke: C.orange, strokeWidth: 2.2, roughness: 0.8, seed: 22 }),
+    S.line(ex, ey + 4, ex - 9, ey - 3, { stroke: C.orange, strokeWidth: 2.2, roughness: 0.6, seed: 23 }),
+    S.line(ex, ey + 4, ex + 5, ey - 6, { stroke: C.orange, strokeWidth: 2.2, roughness: 0.6, seed: 24 }),
+    // sóng tăng: mũi tên song song phía trên-trái đường giá
+    S.path(`M${x(12.2)} ${y(66)} C ${x(14)} ${y(74)}, ${x(16)} ${y(84)}, ${x(18)} ${y(94)}`, { stroke: C.orange, strokeWidth: 2.6, roughness: 0.9, seed: 25 }),
+    S.line(x(18), y(94), x(18) - 4, y(94) + 15, { stroke: C.orange, strokeWidth: 2.6, roughness: 0.5, seed: 26 }),
+    S.line(x(18), y(94), x(18) - 15, y(94) + 5, { stroke: C.orange, strokeWidth: 2.6, roughness: 0.5, seed: 27 }),
   ];
-  return svg(W, H, [
-    // con sóng lớn cuộn đầu ở bên phải
-    S.path('M10 420 C 110 410, 200 380, 270 320 C 330 268, 360 190, 410 140 C 450 100, 505 105, 510 150 C 514 190, 478 210, 452 196 C 430 184, 436 156, 458 158 C 472 160, 474 176, 462 180 C 470 230, 490 300, 512 330 L 512 430 L 10 430 Z',
-      { fill: C.orangeLite, stroke: C.orange, strokeWidth: 3, roughness: 1.2, seed: 4 }),
-    S.path('M60 425 C 160 400, 260 360, 320 300 C 360 260, 390 210, 420 180', { stroke: C.teal, strokeWidth: 2.6, roughness: 1.4, seed: 5 }),
-    S.path('M200 428 C 290 400, 370 350, 420 290', { stroke: C.teal, strokeWidth: 2.2, roughness: 1.4, seed: 6 }),
-    S.path('M400 128 C 380 110, 360 112, 350 126', { stroke: C.orange, strokeWidth: 2.2, seed: 7 }),
-    S.path('M430 108 C 425 90, 410 84, 398 90', { stroke: C.orange, strokeWidth: 2.2, seed: 8 }),
-    // nến tăng dần
-    ...candle(110, 250, 360, 270, 340, C.yellow),
-    ...candle(190, 200, 330, 220, 300, C.white),
-    ...candle(270, 140, 290, 165, 260, C.yellow),
-    ...candle(350, 70, 250, 95, 210, C.orange),
-    // mũi tên tăng trưởng xanh ngọc
-    S.path('M70 300 Q 200 230 300 150 T 420 50', { stroke: C.teal, strokeWidth: 4, roughness: 1.3, seed: 9 }),
-    S.line(420, 50, 396, 54, { stroke: C.teal, strokeWidth: 4 }),
-    S.line(420, 50, 414, 74, { stroke: C.teal, strokeWidth: 4 }),
-    // đường nền
-    S.line(30, 400, 490, 404, { strokeWidth: 2.4 }),
-    // vài nét sao lấp lánh
-    S.line(450, 120, 470, 120, { stroke: C.orange }), S.line(460, 110, 460, 130, { stroke: C.orange }),
-    S.line(60, 200, 74, 200, { stroke: C.orange }), S.line(67, 193, 67, 207, { stroke: C.orange }),
-  ], { cls: 'hero-art', label: 'Hình vẽ tay: cây nến cổ phiếu tăng dần trên con sóng lớn' });
+  const hand = `font-family="'Patrick Hand','Itim',cursive"`;
+  const labels = `
+    <text x="${ax}" y="${y(41.5) + 48}" text-anchor="middle" ${hand} font-size="23" fill="${C.ink}">vùng tích luỹ</text>
+    <text x="${x(9.4)}" y="${y(66) + 7}" text-anchor="end" ${hand} font-size="24" fill="${C.orange}">điểm vào</text>
+    <rect x="${x(15.2) - 98}" y="${y(81) - 9}" width="100" height="13" fill="${C.yellow}"/>
+    <text x="${x(15.2)}" y="${y(81)}" text-anchor="end" ${hand} font-size="25" fill="${C.ink}">sóng tăng</text>`;
+  const label = 'Minh hoạ biểu đồ nến: giai đoạn tích luỹ đi ngang, điểm vào khi bứt phá và sóng tăng mạnh phía sau';
+  return `<svg class="hero-art" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label}">${g.replace(/(\d+\.\d{2})\d+/g, '$1')}${ann.map(paths).join('')}${labels}</svg>`;
 }
 
 // ---------- Logo (vẽ lại theo logo thương hiệu; dùng khi chưa có file PNG) ----------
@@ -250,36 +261,6 @@ export function logoSvg(cls = 'logo-svg') {
 /** Favicon SVG đứng riêng (không phụ thuộc font) */
 export function faviconSvg() {
   return logoCandles('').replace('<svg class=""', '<svg');
-}
-
-// ---------- Con đường hành trình (section 3) ----------
-// Toạ độ mốc theo % — phải khớp với CSS (.journey-pc .stop-N)
-export const JOURNEY_X = [14, 30, 48, 66, 82];
-export function journeyRoadPC() {
-  const W = 1000, H = 120;
-  const xs = JOURNEY_X.map((p) => (p / 100) * W);
-  const ys = [40, 80, 40, 80, 40];
-  // đường cong đi qua các mốc, có đoạn xuất phát và đoạn đích
-  const pts = [[0, 60], ...xs.map((x, i) => [x, ys[i]]), [W, 60]];
-  let d = `M ${pts[0][0]} ${pts[0][1]}`;
-  for (let i = 1; i < pts.length; i++) {
-    const [x0, y0] = pts[i - 1];
-    const [x1, y1] = pts[i];
-    const mx = (x0 + x1) / 2;
-    d += ` C ${mx} ${y0}, ${mx} ${y1}, ${x1} ${y1}`;
-  }
-  return `<svg class="road road-pc" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
-    <path d="${d}" fill="none" stroke="${C.road}" stroke-width="34" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-    <path d="${d}" fill="none" stroke="${C.paper}" stroke-width="3" stroke-dasharray="14 12" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-  </svg>`;
-}
-export function journeyRoadMobile() {
-  // đường dọc uốn lượn; preserveAspectRatio none để kéo dài theo chiều cao danh sách
-  const d = 'M 30 0 C 10 80, 50 120, 30 200 S 10 320, 30 400 S 50 520, 30 600 S 10 720, 30 800 S 50 920, 30 1000';
-  return `<svg class="road road-mobile" viewBox="0 0 60 1000" preserveAspectRatio="none" aria-hidden="true">
-    <path d="${d}" fill="none" stroke="${C.road}" stroke-width="22" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-    <path d="${d}" fill="none" stroke="${C.paper}" stroke-width="2.5" stroke-dasharray="10 10" vector-effect="non-scaling-stroke"/>
-  </svg>`;
 }
 
 // ---------- Ảnh tạm (placeholder) ----------

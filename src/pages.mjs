@@ -1,5 +1,5 @@
 // Mẫu HTML các trang. Nội dung chữ lấy nguyên văn từ bản yêu cầu.
-import { icons, heroIllustration, logoSvg, journeyRoadPC, journeyRoadMobile, JOURNEY_X } from './doodles.mjs';
+import { icons, heroIllustration, logoSvg } from './doodles.mjs';
 
 export const esc = (s = '') =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -93,16 +93,15 @@ function header(ctx) {
     <a class="brand" href="/" aria-label="${esc(ctx.cfg.site.thuongHieu)} — về đầu trang">${logo(ctx)}</a>
     ${ctaButton('Đăng ký ngay', 'btn-sm')}
   </div>
-  <svg class="header-line" viewBox="0 0 1200 8" preserveAspectRatio="none" aria-hidden="true"><path d="M0 4 C 200 2, 400 6, 600 4 S 1000 2, 1200 5" fill="none" stroke="#1F1F1F" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>
 </header>`;
 }
 
 function hero(ctx) {
   const { cfg } = ctx;
-  const chips = cfg.khoaHoc.nhanNhanh.map((t) => `<li class="chip" data-rough="ink" data-rough-r="22">${esc(t)}</li>`).join('');
+  const chips = cfg.khoaHoc.nhanNhanh.map((t) => `<li class="chip">${esc(t)}</li>`).join('');
   const portrait = ctx.portrait
     ? `<figure class="polaroid" data-rough="ink" data-rough-r="4"><img src="${ctx.portrait.src}" width="${ctx.portrait.w}" height="${ctx.portrait.h}" alt="Chân dung người giảng dạy" fetchpriority="high"></figure>`
-    : heroIllustration();
+    : `<figure class="chart-card">${heroIllustration()}<figcaption>Hình minh hoạ phương pháp — không phải dữ liệu của một mã cụ thể</figcaption></figure>`;
   return `<section class="hero" aria-labelledby="hero-title">
   <div class="container hero-grid">
     <div class="hero-text">
@@ -125,7 +124,7 @@ function proof(ctx) {
     .map(
       (v, i) => `<li class="vcard">
       <button type="button" class="vcard-btn" data-video="${i}" aria-label="Xem video: ${esc(v.nhan)}">
-        <span class="vcard-frame" data-rough="ink" data-rough-r="18">
+        <span class="vcard-frame">
           <img src="${v.poster}" alt="" width="360" height="640" loading="lazy" decoding="async">
           <span class="vcard-play">${icons.play()}</span>
         </span>
@@ -193,14 +192,12 @@ const JOURNEY = [
 ];
 
 function journey() {
-  const card = (s, i) => `<article class="jcard jcard-${i + 1}${i === 4 ? ' note note-yellow' : ''}" ${i === 4 ? '' : 'data-rough="ink" data-rough-r="18"'}>
-      <span class="stop" aria-hidden="true">${i + 1}</span>
+  const card = (s, i) => `<article class="jcard jcard-${i + 1}${i === 4 ? ' note note-yellow' : ''}">
       ${s.sticker ? `<span class="sticker">${s.sticker}</span>` : ''}
       <div class="jcard-head">${icons[s.icon]()}<h3><span class="sr-only">Nội dung ${i + 1}: </span>${s.title}</h3></div>
       ${s.big ? `<p class="bignum"><span>1 tuần</span>${icons.arrowRight('#E4561A')}<span>20 phút</span></p>` : ''}
       <p>${s.text}</p>
     </article>`;
-  const stopsPC = JOURNEY_X.map((x, i) => `<span class="road-stop road-stop-${i + 1}" style="--x:${x / 100}">${i + 1}</span>`).join('');
   return `<section class="section journey" id="noi-dung-khoa-hoc" aria-labelledby="journey-title">
   <div class="container">
     ${tag('BẠN SẼ NHẬN ĐƯỢC')}
@@ -209,15 +206,7 @@ function journey() {
       <p class="lead">Khoá học xây trên bản chất của đầu tư giá trị: ${hl('thuyết kỳ vọng tương lai')}. Tư duy này áp dụng được cho bất động sản, vàng hay cổ phiếu — và khoá học đi sâu vào cổ phiếu với 5 nội dung:</p>
       <div class="asset-icons">${icons.house()}${icons.gold()}${icons.candles(true)}</div>
     </div>
-    <div class="journey-map">
-      <div class="journey-start" aria-hidden="true">${icons.flag()}<span>Xuất phát</span></div>
-      <div class="jgrid">
-        <div class="journey-road-pc" aria-hidden="true">${journeyRoadPC()}${stopsPC}</div>
-        ${journeyRoadMobile()}
-        <ol class="jlist">${JOURNEY.map((s, i) => `<li>${card(s, i)}</li>`).join('')}</ol>
-      </div>
-      <div class="journey-end" aria-hidden="true">${icons.finishFlag()}<span>Đích</span></div>
-    </div>
+    <ol class="timeline">${JOURNEY.map((s, i) => `<li class="tl-item tl-${i + 1}"><span class="tl-num" aria-hidden="true">${i + 1}</span>${card(s, i)}</li>`).join('')}</ol>
   </div>
 </section>`;
 }
@@ -229,13 +218,13 @@ function practice() {
     <h2 id="practice-title" class="section-title">Không chỉ dừng lại ở một khoá học</h2>
     <p class="lead narrow">Lý thuyết chỉ là lý thuyết nếu bạn chưa va chạm với case study thực tế. Vì vậy tôi phân tích cả hai loại cổ phiếu:</p>
     <div class="compare">
-      <div class="compare-col" data-rough="teal" data-rough-r="18">
+      <div class="compare-col compare-yes">
         ${icons.check()}
         <h3>Cổ phiếu sóng thần thật</h3>
         <p>Vì sao nó tăng vượt trội, và dấu hiệu nào đã báo trước.</p>
       </div>
       <div class="compare-vs">${icons.vs()}</div>
-      <div class="compare-col" data-rough="orange" data-rough-r="18">
+      <div class="compare-col compare-no">
         ${icons.cross()}
         <h3>Cổ phiếu “trông có vẻ” sóng thần</h3>
         <p>Vì sao tôi không chọn, và cái bẫy nằm ở đâu.</p>
@@ -249,7 +238,7 @@ function practice() {
 function notFor() {
   return `<section class="section notfor" id="luu-y" aria-labelledby="notfor-title">
   <div class="container">
-    <div class="notfor-box" data-rough="orange" data-rough-r="18" data-rough-w="2.6">
+    <div class="notfor-box" data-rough="orange" data-rough-r="14" data-rough-w="2">
       ${tag('LƯU Ý TRƯỚC KHI ĐĂNG KÝ')}
       <h2 id="notfor-title" class="section-title">Khoá học này không dành cho bạn nếu…</h2>
       <ul class="marks">
@@ -284,7 +273,7 @@ function feedback(ctx) {
       <div class="masonry" role="list" data-masonry>${items}</div>
       <div class="board-fade" data-fade></div>
     </div>
-    <div class="board-more"><button type="button" class="btn btn-ghost" data-more data-rough="ink" data-rough-r="24">Xem thêm phản hồi</button></div>
+    <div class="board-more"><button type="button" class="btn btn-ghost" data-more>Xem thêm phản hồi</button></div>
   </div>
 </section>`;
 }
@@ -299,12 +288,12 @@ function register(ctx) {
     ${tag('ĐĂNG KÝ')}
     <h2 id="reg-title" class="section-title">Đăng ký khoá học</h2>
     <div class="reg-grid">
-      <div class="price-card" data-rough="ink" data-rough-r="18" data-rough-w="2.4">
+      <div class="price-card" data-rough="ink" data-rough-r="14" data-rough-w="1.8">
         <p class="price-head">${esc(cfg.khoaHoc.ten).toUpperCase()}</p>
         <p class="price"><span class="price-num">${formatVnd(cfg.khoaHoc.hocPhi)}</span> <span class="price-unit">${esc(cfg.khoaHoc.donViGia)}</span></p>
         <ul class="benefits">${benefits}</ul>
       </div>
-      <form class="reg-form" id="reg-form" novalidate data-rough="ink" data-rough-r="18">
+      <form class="reg-form" id="reg-form" novalidate>
         <div class="field">
           <label for="f-name">Họ và tên <span class="req" aria-hidden="true">*</span></label>
           <input id="f-name" name="hoTen" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="e-name">
@@ -376,7 +365,7 @@ function floating(ctx) {
   const { cfg } = ctx;
   return `<a class="zalo-float" href="${esc(cfg.lienHe.zalo)}" target="_blank" rel="noopener" data-zalo aria-label="Nhắn Zalo">${icons.zalo()}</a>
 <div class="sticky-bar" data-sticky-bar>
-  <p class="sticky-info"><strong>${formatVnd(cfg.khoaHoc.hocPhi)}</strong> · ${esc(cfg.khoaHoc.tomTatThanhDangKy)}</p>
+  <p class="sticky-info"><strong>${formatVnd(cfg.khoaHoc.hocPhi)}</strong>${esc(cfg.khoaHoc.tomTatThanhDangKy)}</p>
   ${ctaButton('Đăng ký ngay', 'btn-sm')}
 </div>`;
 }
@@ -423,7 +412,7 @@ function privacyDialog(ctx) {
 export function privacyPage(ctx) {
   const body = `${simpleHeader(ctx)}
 <main class="container page-narrow privacy-page">${privacyContent(ctx.cfg)}
-<p><a class="btn btn-ghost" href="/" data-rough="ink" data-rough-r="24">← Quay lại trang chủ</a></p></main>
+<p><a class="btn btn-ghost" href="/">← Quay lại trang chủ</a></p></main>
 ${footer(ctx, { withDisclaimer: false })}`;
   return layout(ctx, {
     title: `Chính sách bảo vệ dữ liệu cá nhân — ${ctx.cfg.site.thuongHieu}`,
@@ -443,14 +432,14 @@ export function thanksPage(ctx) {
   const { cfg } = ctx;
   const body = `${simpleHeader(ctx)}
 <main class="container page-narrow thanks">
-  <div class="thanks-card" data-rough="ink" data-rough-r="18" data-rough-w="2.4">
+  <div class="thanks-card">
     <div class="thanks-flag">${icons.finishFlag()}</div>
     <h1 class="section-title">Đăng ký ${hl('thành công!')}</h1>
     <p class="lead" data-thanks-msg>Cảm ơn bạn. Tôi sẽ nhắn Zalo cho bạn qua số điện thoại bạn đã để lại để xác nhận lịch học. Muốn trao đổi ngay? Nhắn cho tôi trước nhé.</p>
     <a class="btn btn-primary btn-lg btn-block" href="${esc(cfg.lienHe.zalo)}" target="_blank" rel="noopener" data-zalo>Nhắn Zalo ngay</a>
     <div class="thanks-links">
-      <a class="btn btn-ghost" href="${esc(cfg.lienHe.tiktok)}" target="_blank" rel="noopener" data-rough="ink" data-rough-r="24">${icons.tiktok()} Xem kênh TikTok</a>
-      <a class="btn btn-ghost" href="/" data-rough="ink" data-rough-r="24">Quay lại trang chủ</a>
+      <a class="btn btn-ghost" href="${esc(cfg.lienHe.tiktok)}" target="_blank" rel="noopener">${icons.tiktok()} Xem kênh TikTok</a>
+      <a class="btn btn-ghost" href="/">Quay lại trang chủ</a>
     </div>
   </div>
 </main>
@@ -468,7 +457,7 @@ ${footer(ctx, { withDisclaimer: false })}`;
 
 export function notFoundPage(ctx) {
   const body = `${simpleHeader(ctx)}
-<main class="container page-narrow thanks"><div class="thanks-card" data-rough="ink" data-rough-r="18">
+<main class="container page-narrow thanks"><div class="thanks-card">
 <h1 class="section-title">Không tìm thấy trang</h1><p class="lead">Trang bạn tìm không tồn tại hoặc đã được chuyển.</p>
 <a class="btn btn-primary" href="/">Về trang chủ</a></div></main>`;
   return layout(ctx, { title: `Không tìm thấy trang — ${ctx.cfg.site.thuongHieu}`, description: ctx.cfg.seo.moTa, path: '/404', body, noindex: true, scripts: `<script type="module" src="${ctx.assets.mainJs}"></script>` });
