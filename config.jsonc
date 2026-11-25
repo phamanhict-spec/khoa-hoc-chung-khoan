@@ -1,0 +1,103 @@
+// =====================================================================
+//  FILE CẤU HÌNH DUY NHẤT CỦA WEBSITE
+//  - Dòng bắt đầu bằng // là ghi chú, không ảnh hưởng gì.
+//  - Sửa xong, lưu file và đẩy lên GitHub → trang tự build lại và cập nhật.
+//  - Giữ nguyên dấu ngoặc kép "..." và dấu phẩy cuối mỗi dòng.
+// =====================================================================
+{
+  // ---------------- THÔNG TIN CHUNG ----------------
+  "site": {
+    // Địa chỉ website khi đã có tên miền, ví dụ "https://phoviethung.vn" (không có dấu / ở cuối).
+    // Để trống thì hệ thống tự lấy link xem thử của Vercel/Netlify/Cloudflare.
+    "url": "",
+    // Tên thương hiệu, hiện ở chân trang và form
+    "thuongHieu": "Chứng khoán phố Việt Hưng",
+    // Năm hiện ở dòng bản quyền chân trang
+    "namBanQuyen": 2026
+  },
+
+  // ---------------- KHOÁ HỌC ----------------
+  "khoaHoc": {
+    // Tên khoá học
+    "ten": "Khoá học tìm cổ phiếu sóng thần",
+    // Học phí — chỉ ghi số, không dấu chấm. Trang tự hiển thị thành "10.000.000đ"
+    "hocPhi": 10000000,
+    // Chữ hiển thị sau giá ở thẻ học phí
+    "donViGia": "/ người",
+    // Chữ ngắn ở thanh đăng ký dính đáy màn hình (mobile), hiện sau giá
+    "tomTatThanhDangKy": "5 buổi online",
+    // 3 nhãn nhỏ ở màn hình đầu tiên
+    "nhanNhanh": ["5 buổi online", "Tối đa 5 người/lớp", "Workshop miễn phí 1 năm"],
+    // Danh sách quyền lợi ở thẻ học phí (section Đăng ký)
+    "quyenLoi": [
+      "5 buổi học online",
+      "Lớp tối đa 5 người — được hỏi đáp và kèm sát",
+      "Nhóm thảo luận riêng cho học viên",
+      "Tham gia miễn phí các workshop trong 1 năm đầu"
+    ]
+  },
+
+  // ---------------- LIÊN HỆ ----------------
+  "lienHe": {
+    // Link Zalo của chủ shop (nút Zalo nổi, trang cảm ơn, chân trang)
+    "zalo": "https://zalo.me/0900000000",
+    // Link kênh TikTok
+    "tiktok": "https://www.tiktok.com/@phoviethung"
+  },
+
+  // ---------------- FORM ĐĂNG KÝ ----------------
+  "form": {
+    // Link Web App của Google Apps Script (xem HUONG-DAN.md mục 4). Dạng https://script.google.com/macros/s/.../exec
+    // Để trống = chế độ thử: form không gửi đi đâu, chỉ chuyển sang trang cảm ơn.
+    "appsScriptUrl": "",
+    // Email nhận thông báo khi có đăng ký mới: điền trong file apps-script/Code.gs (dòng NOTIFY_EMAIL),
+    // không để ở đây để email không bị lộ ra trình duyệt.
+    // Danh sách "Bạn biết đến khoá học qua đâu?"
+    "nguonBietDen": ["TikTok", "Facebook", "YouTube", "Bạn bè giới thiệu", "Khác"]
+  },
+
+  // ---------------- VIDEO CHỨNG MINH DANH MỤC (section 2) ----------------
+  // Mỗi video gồm:
+  //   "youtube": link YouTube Shorts (để "Không công khai") hoặc mã video. Ví dụ "https://youtube.com/shorts/abc123XYZ"
+  //   "mp4":     (thay cho youtube) đường dẫn file mp4 dọc 9:16 đặt trong thư mục assets/video/, ví dụ "/assets/video/thang-10.mp4"
+  //   "anhBia":  ảnh bìa dọc 9:16 đặt trong assets/video/, ví dụ "/assets/video/thang-10.jpg". Để trống = tự lấy ảnh từ YouTube
+  //   "nhan":    dòng chữ ngắn dưới thẻ
+  // Thêm/bớt video = thêm/bớt 1 khối { ... } (nhớ dấu phẩy giữa các khối).
+  "videos": [
+    { "youtube": "", "anhBia": "", "nhan": "Danh mục tháng 10/2026" },
+    { "youtube": "", "anhBia": "", "nhan": "Danh mục tháng 9/2026" },
+    { "youtube": "", "anhBia": "", "nhan": "Danh mục tháng 8/2026" },
+    { "youtube": "", "anhBia": "", "nhan": "Danh mục tháng 7/2026" }
+  ],
+
+  // ---------------- PIXEL & ĐO LƯỜNG ----------------
+  // Để trống "" = không tải pixel đó.
+  "pixel": {
+    // TikTok Pixel ID, ví dụ "CXXXXXXXXXXXXXXXXXXX"
+    "tiktok": "",
+    // Facebook (Meta) Pixel ID, ví dụ "123456789012345"
+    "facebook": "",
+    // Google Analytics 4 Measurement ID, ví dụ "G-XXXXXXX"
+    "ga4": "",
+    // Google Tag Manager ID (tuỳ chọn), ví dụ "GTM-XXXXXX"
+    "gtm": ""
+  },
+
+  // ---------------- SEO & CHIA SẺ LINK ----------------
+  "seo": {
+    // Tiêu đề trang (hiện trên tab trình duyệt và khi chia sẻ link)
+    "tieuDe": "Khoá học tìm cổ phiếu sóng thần — Chứng khoán phố Việt Hưng",
+    // Mô tả ngắn khi chia sẻ link / trên Google
+    "moTa": "Phương pháp tìm cổ phiếu tăng trưởng vượt trội: từ vĩ mô đến doanh nghiệp, đọc BCTC nâng cao, dùng AI phân tích. 5 buổi online, lớp tối đa 5 người.",
+    // Ảnh chia sẻ 1200×630 (đặt trong thư mục assets/)
+    "anhChiaSe": "/assets/og-image.png"
+  },
+
+  // ---------------- HÌNH ẢNH ----------------
+  "hinhAnh": {
+    // File logo nền trong suốt trong thư mục assets/. Nếu chưa có file, trang dùng logo vẽ lại bằng SVG.
+    "logo": "/assets/logo-pho-viet-hung-transparent.png",
+    // Ảnh chân dung chủ shop cho màn hình đầu (khung polaroid). Để trống = dùng hình minh hoạ vẽ tay.
+    "anhChanDung": ""
+  }
+}

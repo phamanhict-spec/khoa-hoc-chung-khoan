@@ -1,0 +1,24 @@
+{
+  "name": "khoa-hoc-co-phieu-song-than",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page Khoá học tìm cổ phiếu sóng thần — Chứng khoán phố Việt Hưng",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "og": "node scripts/make-og.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@fontsource/be-vietnam-pro": "^5.3.0",
+    "@fontsource/patrick-hand": "^5.3.0",
+    "esbuild": "^0.28.2",
+    "jsonc-parser": "^3.3.1",
+    "roughjs": "^4.6.6",
+    "sharp": "^0.35.5"
+  }
+}
